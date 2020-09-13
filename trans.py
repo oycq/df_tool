@@ -5,9 +5,9 @@ import numpy as np
 
 mouse_x = 0
 mouse_y = 0
-rect_w = 50
-rect_h = 50
-name = '2'
+rect_w = 40
+rect_h = 40
+name = 'output'
 
 GENERATE = 1
 
@@ -42,17 +42,23 @@ if GENERATE == 0:
         cv2.imshow('show',img)
         key = cv2.waitKey(1)
         if ord('0') < key <= ord('9'):
-            rect_w = (key - ord('0')) * 50
-            rect_h = (key - ord('0')) * 50
+            rect_w = (key - ord('0')) * 100
+            rect_h = (key - ord('0')) * 100
         if key == ord('q'):
             np.save(name+'.npy', record)
             sys.exit(0)
+        if key == ord('s'):
+            np.save(name+'.npy', record)
         if key == ord('k'):
             record[i] = 0,0,0,0
             i += 1
+            if i > len(video_frames)-2:
+                i = len(video_frames)-2
         if key == ord(' '):
             record[i] = x,y,x+rect_w,y+rect_h
             i += 1
+            if i > len(video_frames)-2:
+                i = len(video_frames)-2
         if key == ord('a'):
             i -= 1
             if i < 0:
@@ -61,6 +67,16 @@ if GENERATE == 0:
             i += 1
             if i > len(video_frames)-2:
                 i = len(video_frames)-2
+        if key == ord('-'):
+            i -= 10
+            if i < 0:
+                i = 0
+        if key == ord('='):
+            i += 10
+            if i > len(video_frames)-2:
+                i = len(video_frames)-2
+
+
 
 if GENERATE == 1:
     for i in range(len(video_frames)):
@@ -71,6 +87,6 @@ if GENERATE == 1:
         p1 = max(0,p1)
         p2 = max(0,p2)
         face = img[p2:p4,p1:p3]
-        cv2.imwrite('output/%s_%d.jpg'%(name,i+100000),face)
+        cv2.imwrite('output/%s_%d.png'%(name,i+100000),face)
         if i % 200 == 0:
             print('%7.2f%%'%(i*100.0/len(video_frames)))
