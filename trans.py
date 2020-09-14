@@ -7,7 +7,7 @@ mouse_x = 0
 mouse_y = 0
 rect_w = 40
 rect_h = 40
-name = 'output'
+name = 'ma'
 
 GENERATE = 1
 

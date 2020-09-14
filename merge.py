@@ -8,7 +8,7 @@ mouse_x = 0
 mouse_y = 0
 rect_w = 40
 rect_h = 40
-name = 'output'
+name = 'ma'
 
 GENERATE = 1
 
@@ -17,11 +17,12 @@ def MouseEvent(event, x, y, flags, param):
     mouse_x,mouse_y = x,y
 
 cap = cv2.VideoCapture(name + '.mp4')
+fps = cap.get(cv2.CAP_PROP_FPS)
 if not GENERATE:
     cv2.namedWindow('show')
-outputfile = 'output_final.mp4'
+outputfile = 'skvideo_output.mp4'
 writer = skvideo.io.FFmpegWriter(outputfile, outputdict={
-  '-r': str(cap.get(cv2.CAP_PROP_FPS)),
+  '-r': '25',
   '-vcodec': 'libx264',  #use the h.264 codec
   '-crf': '0',           #set the constant rate factor to 0, which is lossless
   '-preset':'veryslow'   #the slower the better compression, in princple, try 
@@ -79,3 +80,7 @@ if GENERATE:
         if i % 50 == 0:
             print('%7.2f%%'%(i*100.0/len(video_frames)))
 writer.close() 
+os.system('ffmpeg -i skvideo_output.mp4 -filter:v "setpts=%f*PTS" -r %f \
+        -b:v 8M -maxrate 12M s1.mp4'%(25/fps,fps))
+os.system('ffmpeg -i %s.mp4 %s.aac'%(name,name))
+os.system('ffmpeg -i s1.mp4 -i %s.aac -c:v copy -c:a aac s.mp4'%(name))
